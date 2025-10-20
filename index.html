@@ -13,15 +13,18 @@
     /* -------- Fixed (dark) theme -------- */
     :root{
       --bg:#0a0b0d;
-      --text:#e9eaee;
-      --muted:#a8acb7;
       --panel:#121318;
       --panel-2:#161821;
+      --text:#e9eaee;
+      --muted:#a8acb7;
       --accent:#93c6ff;
       --focus:#ffd78e;
       --border:1px solid rgba(255,255,255,.06);
       --radius:14px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius-lg:16px;
+      --shadow:0 8px 24px rgba(0,0,0,.28);
+      --gap:14px;
+      --max:1300px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -29,38 +32,69 @@
     body{margin:0; background:var(--bg); color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
     :focus-visible{outline:3px solid var(--focus); outline-offset:6px; border-radius:10px}
 
-    /* -------- Full-bleed Masonry Gallery -------- */
-    main{min-height:100dvh}
-    .grid{
-      column-gap:0;           /* no gaps, full-bleed rows */
-      line-height:0;          /* remove whitespace between inline-block images */
-      width:100vw;            /* edge to edge */
+    /* -------- Minimal header (non-distracting) -------- */
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:saturate(140%) blur(8px);
+      background:color-mix(in srgb, var(--bg) 86%, transparent);
+      border-bottom:var(--border);
     }
-    /* responsive column counts */
-    @media (min-width:1500px){ .grid{ column-count:6 } }
-    @media (min-width:1200px) and (max-width:1499px){ .grid{ column-count:5 } }
-    @media (min-width:900px)  and (max-width:1199px){ .grid{ column-count:4 } }
-    @media (min-width:640px)  and (max-width:899px) { .grid{ column-count:3 } }
-    @media (max-width:639px){  .grid{ column-count:2 } }
+    .bar{max-width:var(--max); margin:auto; padding:10px 18px; display:flex; align-items:center; gap:14px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px; opacity:.9}
+    .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg, var(--accent), #ffd78e)}
+    .spacer{flex:1}
+    .filters{display:flex; gap:10px; flex-wrap:wrap}
+    .filters button{
+      background:var(--panel-2); color:var(--text); border:var(--border);
+      padding:8px 12px; border-radius:999px; cursor:pointer; font-weight:700; opacity:.95
+    }
+    .filters button.active{ background:var(--accent); color:#0b0b0c; border:0; opacity:1 }
+    @media (max-width:700px){ .brand span{display:none} } /* keep the header tiny on mobile */
+
+    /* -------- Gallery section -------- */
+    main{padding:18px 0 60px}
+    .container{max-width:var(--max); margin:auto; padding:0 18px}
+
+    /* Structured mosaic grid with gaps, rounded corners */
+    .grid{
+      display:grid;
+      gap:var(--gap);
+      grid-template-columns:repeat(12,1fr);
+    }
+    @media (max-width:1200px){ .grid{grid-template-columns:repeat(10,1fr)} }
+    @media (max-width:980px){  .grid{grid-template-columns:repeat(8,1fr)} }
+    @media (max-width:760px){  .grid{grid-template-columns:repeat(6,1fr)} }
+    @media (max-width:560px){  .grid{grid-template-columns:repeat(4,1fr)} }
+    @media (max-width:420px){  .grid{grid-template-columns:repeat(2,1fr)} }
 
     .tile{
-      display:inline-block;   /* required for masonry */
-      width:100%;
-      break-inside:avoid;     /* keep each image intact */
-      position:relative;
+      position:relative; overflow:hidden; border-radius:var(--radius);
+      border:var(--border); background:#0f1116; box-shadow:var(--shadow);
+      transition:transform .25s ease, box-shadow .25s ease;
     }
-    .tile a{ display:block; text-decoration:none; color:inherit; }
+    .tile:hover{ transform:translateY(-2px) }
     .tile img{
-      width:100%; height:auto; display:block;
-      background:#0f1116;     /* subtle background while loading */
-      transition:filter .2s ease, transform .35s ease;
-      filter:saturate(1.02) contrast(1.02);
+      width:100%; height:100%; display:block; object-fit:cover; background:#111;
+      border-radius:inherit; transition:transform .35s ease; filter:saturate(1.02) contrast(1.02);
     }
-    .tile:hover img{ transform:scale(1.01) }
+    .tile:hover img{ transform:scale(1.03) }
 
-    /* -------- Minimal overlay controls -------- */
+    /* Size map for the mosaic look (S/M/L) */
+    .tile[data-size="s"]{ grid-column:span 3; aspect-ratio:1/1 }
+    .tile[data-size="m"]{ grid-column:span 4; aspect-ratio:4/3 }
+    .tile[data-size="l"]{ grid-column:span 6; aspect-ratio:16/10 }
+    @media (max-width:980px){
+      .tile[data-size="l"]{ grid-column:span 8 }
+      .tile[data-size="m"]{ grid-column:span 8 }
+      .tile[data-size="s"]{ grid-column:span 4 }
+    }
+    @media (max-width:560px){
+      .tile{ grid-column:span 4 !important; aspect-ratio:4/3 }
+    }
+
+    /* -------- Drawer for About / Contact (kept out of the way) -------- */
     .fab{
-      position:fixed; right:16px; bottom:16px; z-index:50;
+      position:fixed; right:16px; bottom:16px; z-index:60;
       width:46px; height:46px; border-radius:50%;
       display:inline-flex; align-items:center; justify-content:center;
       background:var(--panel); color:var(--text);
@@ -70,42 +104,59 @@
     .drawer{
       position:fixed; inset:0 0 0 auto; width:min(360px,88vw);
       transform:translateX(100%); transition:.25s ease transform;
-      background:var(--panel-2); border-left:var(--border); z-index:60; padding:18px;
+      background:var(--panel-2); border-left:var(--border); z-index:70; padding:18px;
+      box-shadow:-12px 0 40px rgba(0,0,0,.35);
     }
     .drawer.open{ transform:none }
     .drawer h3{ margin:0 0 6px 0 }
-    .drawer a{ display:block; padding:10px 0; color:var(--text); text-decoration:none; border-bottom:1px dashed #3336 }
     .drawer p{ color:var(--muted) }
+    .drawer a{ display:block; padding:10px 0; text-decoration:none; color:var(--text); border-bottom:1px dashed #3336 }
     .drawer .close{
       position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:50%;
       border:var(--border); background:#000a; color:#fff; cursor:pointer;
     }
 
     /* -------- Lightbox -------- */
-    dialog.lightbox{width:min(1600px,94vw); border:none; padding:0; background:transparent; }
-    dialog::backdrop{background:rgba(0,0,0,.85)}
+    dialog.lightbox{width:min(1600px,94vw); border:none; padding:0; background:transparent}
+    dialog::backdrop{background:rgba(0,0,0,.86)}
     .lightbox figure{margin:0; position:relative}
-    .lightbox img{width:100%; height:auto; display:block; border-radius:12px}
+    .lightbox img{width:100%; height:auto; display:block; border-radius:var(--radius-lg)}
     .lightbox .close{position:absolute; top:10px; right:10px; background:#000a; color:#fff; border:none; border-radius:999px; width:40px; height:40px; font-size:18px; cursor:pointer}
   </style>
 </head>
 <body>
-  <!-- Minimal floating menu (not distracting) -->
+  <!-- Header: brand + quiet filter pills -->
+  <header>
+    <div class="bar">
+      <div class="brand"><span class="dot" aria-hidden="true"></span><span>David’s Gallery</span></div>
+      <div class="spacer"></div>
+      <div class="filters" aria-label="filters">
+        <button class="active" data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="city" aria-pressed="false">City</button>
+        <button data-filter="people" aria-pressed="false">People</button>
+        <button data-filter="nature" aria-pressed="false">Nature</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Image-first content -->
+  <main>
+    <div class="container">
+      <div class="grid" id="grid" aria-label="Photo gallery"></div>
+    </div>
+  </main>
+
+  <!-- Discreet menu for About/Contact -->
   <button class="fab" id="menuBtn" aria-controls="drawer" aria-expanded="false" title="Menu">≡</button>
   <aside class="drawer" id="drawer" aria-hidden="true">
     <button class="close" onclick="toggleDrawer(false)" aria-label="Close">✕</button>
-    <h3>David — Photography</h3>
+    <h3>About</h3>
     <p>Vienna • Portraits • Street • Landscape</p>
     <a href="mailto:you@example.com">Contact</a>
     <a href="https://www.instagram.com/davidsgallery99/" target="_blank" rel="noopener">Instagram</a>
     <a href="https://davidsgallery99.github.io" target="_blank" rel="noopener">Website</a>
     <p style="margin-top:12px; color:#777">© <span id="year"></span> David</p>
   </aside>
-
-  <!-- IMAGE-ONLY HOMEPAGE -->
-  <main>
-    <div class="grid" id="grid" aria-label="Photo gallery"></div>
-  </main>
 
   <!-- Lightbox -->
   <dialog class="lightbox" id="lightbox">
@@ -116,12 +167,12 @@
   </dialog>
 
   <script>
-    // ---------- Repo info for auto-loading your folders ----------
+    // ------- Repo info for auto-loading your folders -------
     const GH_USER = "davidsgallery99";             // change if needed
     const GH_REPO = "davidsgallery99.github.io";   // change if needed
     const BRANCH  = "main";                        // or "gh-pages"
 
-    // ---------- Minimal menu ----------
+    // ------- Drawer (About/Contact) -------
     const drawer = document.getElementById('drawer');
     const btn = document.getElementById('menuBtn');
     function toggleDrawer(force){
@@ -132,8 +183,9 @@
     }
     btn.addEventListener('click', ()=>toggleDrawer());
 
-    // ---------- Helpers ----------
+    // ------- Helpers -------
     const grid = document.getElementById('grid');
+    const filterBtns=[...document.querySelectorAll('.filters button')];
     const categories = ['city','people','nature'];
     const exts = ['.jpg','.jpeg','.png','.webp','.avif','.JPG','.JPEG','.PNG','.WEBP','.AVIF'];
     const enc = s => s.split('/').map(encodeURIComponent).join('/');
@@ -146,27 +198,29 @@
       return res.json();
     }
 
-    function makeTile(cat, filename){
-      const large = `images/large/${cat}/${filename}`;
-      const thumb = `images/thumbs/${cat}/${filename}`;
-
+    // ------- Build nice structured mosaic (S/M/L pattern) -------
+    function makeTile(cat, filename, size){
       const a = document.createElement('a');
-      a.href = large;
+      a.href = `images/large/${cat}/${filename}`;
       a.className = 'tile';
       a.dataset.tags = cat;
+      a.dataset.size = size; // "s" | "m" | "l"
 
       const img = document.createElement('img');
       img.alt = `${cat} photo`;
       img.loading = 'lazy';
       img.decoding = 'async';
 
-      // Sharp by default; thumb only as a smaller candidate
-      img.src = large;
-      img.srcset = `${thumb} 600w, ${large} 1800w`;
-      img.sizes = '100vw';
-
-      // If thumb missing, keep large (no pixelation)
-      img.addEventListener('error', e => {
+      const large = a.href;
+      const thumb = `images/thumbs/${cat}/${filename}`;
+      img.src = large;                           // sharp by default
+      img.srcset = `${thumb} 700w, ${large} 1800w`;
+      img.sizes = `
+        (max-width:560px) 92vw,
+        (max-width:980px) 86vw,
+        30vw
+      `;
+      img.addEventListener('error', e=>{
         if (e.target.currentSrc.includes('/thumbs/')) e.target.src = large;
       }, {once:true});
 
@@ -175,7 +229,6 @@
     }
 
     (async function build(){
-      // Load and append every image from thumbs/* (mirrors to large/*)
       const lists = await Promise.all(categories.map(cat => listDir(`images/thumbs/${cat}`).catch(()=>[])));
       const items = [];
       lists.forEach((arr, i)=>{
@@ -183,32 +236,42 @@
         (arr||[]).filter(x => x.type==='file' && isImage(x.name)).forEach(x => items.push({cat, filename:x.name}));
       });
 
-      // Order: interleave categories for variety
-      items.sort((a,b)=> a.filename.localeCompare(b.filename));
-
-      // Append all as masonry tiles
-      items.forEach(it => grid.appendChild(makeTile(it.cat, it.filename)));
+      // Balanced visual rhythm: repeat this size pattern
+      const pattern = ['l','m','s','m','m','l','s','m'];
+      items.forEach((it, idx)=>{
+        const size = pattern[idx % pattern.length];
+        grid.appendChild(makeTile(it.cat, it.filename, size));
+      });
     })().catch(err=>{
       console.error(err);
-      // If listing fails, keep page clean
       grid.innerHTML = "";
     });
 
-    // ---------- Lightbox ----------
+    // ------- Filters (quiet chips) -------
+    filterBtns.forEach(b=>b.addEventListener('click',()=>{
+      filterBtns.forEach(x=>{ x.classList.remove('active'); x.setAttribute('aria-pressed','false'); });
+      b.classList.add('active'); b.setAttribute('aria-pressed','true');
+      const f=b.dataset.filter;
+      [...grid.children].forEach(tile=>{
+        tile.style.display = (f==='all' || tile.dataset.tags===f) ? 'block' : 'none';
+      });
+    }));
+
+    // ------- Lightbox -------
     const dlg=document.getElementById('lightbox');
     const lightImg=document.getElementById('lightImg');
     grid.addEventListener('click', e=>{
       const a = e.target.closest('a.tile');
       if(!a) return;
       e.preventDefault();
-      lightImg.src = a.href;
+      lightImg.src = a.getAttribute('href');
       lightImg.alt = a.querySelector('img')?.alt || '';
       dlg.showModal();
     });
     function closeLightbox(){ dlg.close(); }
     window.closeLightbox = closeLightbox;
 
-    // ---------- Year ----------
+    // Year
     document.getElementById('year')?.appendChild(document.createTextNode(new Date().getFullYear()));
   </script>
 </body>
