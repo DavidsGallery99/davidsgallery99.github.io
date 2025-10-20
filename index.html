@@ -6,34 +6,54 @@
   <title>David — Photography</title>
   <meta name="description" content="Vienna-based photographer. City, people, and landscape photography." />
   <meta name="robots" content="index,follow" />
-  <meta name="theme-color" content="#0b0b0c" />
+  <meta name="theme-color" content="#0a0b0d" />
   <meta property="og:title" content="David — Photography" />
   <meta property="og:description" content="Portfolio of David: light, cities & moments." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="images/og-preview.jpg" />
+  <meta property="og:image" content="images/large/hero/hero.jpg" />
   <link rel="icon" href="images/favicon.ico" />
-  <link rel="preload" as="image" href="images/hero.jpg" imagesrcset="images/hero.jpg" />
+  <!-- Preload hero for instant paint -->
+  <link rel="preload" as="image" href="images/large/hero/hero.jpg" imagesrcset="images/large/hero/hero.jpg" />
+
   <style>
+    /* ---- FIXED (dark) THEME — no auto light/dark ---- */
     :root{
-      --bg:#0a0b0d; --panel:#121318; --panel-2:#161821; --text:#e9eaee; --muted:#a8acb7;
-      --accent:#93c6ff; --accent-2:#ffd78e; --link:#b38bfa; --link-hover:#d8b4ff; --focus:#ffd78e;
-      --max:1200px; --radius:16px; --radius-sm:12px; --shadow:0 10px 30px rgba(0,0,0,.35);
-      --border:1px solid rgba(255,255,255,.06); --grid-gap:14px;
+      --bg:#0a0b0d;
+      --panel:#121318;
+      --panel-2:#161821;
+      --text:#e9eaee;
+      --muted:#a8acb7;
+      --accent:#93c6ff;
+      --accent-2:#ffd78e;
+      --link:#b38bfa;
+      --link-hover:#d8b4ff;
+      --focus:#ffd78e;
+      --max:1200px;
+      --radius:16px;
+      --radius-sm:12px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --border:1px solid rgba(255,255,255,.06);
+      --grid-gap:14px;
     }
-    @media (prefers-color-scheme: light){
-      :root{ --bg:#ffffff; --panel:#f6f7fb; --panel-2:#eef0f7; --text:#121317; --muted:#5b5e69;
-             --border:1px solid rgba(0,0,0,.08); --shadow:0 10px 30px rgba(0,0,0,.08)}
-    }
+
     *{box-sizing:border-box}
-    html,body{height:100%} html{scroll-behavior:smooth}
-    body{margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text)}
+    html,body{height:100%}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
     :focus-visible{ outline:3px solid var(--focus); outline-offset:8px; border-radius:10px }
 
+    /* Layout */
     .container{max-width:var(--max); margin-inline:auto; padding:0 22px}
     .btn{display:inline-flex; gap:10px; align-items:center; padding:12px 18px; border-radius:999px; background:var(--accent); color:#0b0b0c; text-decoration:none; font-weight:700; letter-spacing:.2px; box-shadow:var(--shadow); border:0}
     .btn.secondary{background:transparent; outline:2px solid var(--accent); color:var(--text); box-shadow:none}
     .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0)}
 
+    /* Header */
     header{position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(8px); background:color-mix(in srgb, var(--bg) 82%, transparent); border-bottom:var(--border)}
     .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; height:68px}
     .brand{display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.3px}
@@ -50,34 +70,35 @@
       .drawer a{display:block; padding:14px 10px; border-bottom:1px dashed #3334; text-decoration:none; color:var(--text); font-weight:600}
     }
 
-    /* HERO: fills viewport with cover */
+    /* Hero — fills viewport; single color theme; high-res background */
     .hero{position:relative; min-height:100dvh; display:grid; place-items:end center; text-align:center; overflow:clip}
     .hero::before{
       content:""; position:absolute; inset:0;
       background:
         linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.2) 40%, transparent 70%),
-        url('images/hero.jpg') center / cover no-repeat;
+        url('images/large/hero/hero.jpg') center / cover no-repeat;
       filter:saturate(1.05) contrast(1.03);
     }
-    @media (prefers-color-scheme: light){ .hero::before{ filter:brightness(.92) saturate(1.05) } }
     .hero > .inner{ position:relative; z-index:1; padding:72px 20px 10vh; max-width:900px; margin:auto }
     .kicker{letter-spacing:.28em; text-transform:uppercase; font-size:.8rem; color:#cfd1d6}
     .hero h1{font-size:clamp(2.2rem,6.4vw,4rem); margin:.35em 0 .2em; line-height:1.05}
     .hero p{max-width:760px; margin:0 auto 26px; color:#e8e9ee; font-size:clamp(1rem,2.4vw,1.15rem)}
     .hero .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
 
+    /* Sections */
     section{padding:70px 0}
     .about{display:grid; grid-template-columns:1.1fr .9fr; gap:28px}
     .about .card{background:var(--panel); padding:26px; border-radius:var(--radius); border:var(--border); box-shadow:var(--shadow)}
     .about h2{margin-top:0}
     @media (max-width:980px){ .about{grid-template-columns:1fr} }
 
+    /* Gallery */
     .gallery h2{margin:0 0 16px; font-size:2rem}
     .filters{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px}
     .filters button{background:var(--panel-2); color:var(--text); border:var(--border); padding:9px 14px; border-radius:999px; cursor:pointer; font-weight:700}
     .filters button.active{background:var(--accent); color:#0b0b0c; border:0}
 
-    /* GRID that fills nicely */
+    /* Grid that fills nicely */
     .grid{ display:grid; gap:var(--grid-gap); grid-template-columns:repeat(12, 1fr) }
     @media (max-width:1280px){ .grid{ grid-template-columns:repeat(10,1fr) } }
     @media (max-width:1024px){ .grid{ grid-template-columns:repeat(8,1fr) } }
@@ -99,22 +120,22 @@
       .tile{ grid-column:span 4 !important; aspect-ratio:4/3 }
     }
 
+    /* Lightbox */
     dialog.lightbox{width:min(1200px,94vw); border:none; padding:0; background:transparent}
     dialog::backdrop{background:rgba(0,0,0,.8)}
     .lightbox figure{margin:0; position:relative}
     .lightbox img{width:100%; height:auto; display:block; border-radius:var(--radius)}
     .close{position:absolute; top:10px; right:10px; background:#000a; color:#fff; border:none; border-radius:999px; width:40px; height:40px; font-size:18px; cursor:pointer}
 
+    /* Contact & Footer */
     .contact .wrap{display:grid; grid-template-columns:1fr 1fr; gap:24px}
     .card{background:var(--panel); padding:26px; border-radius:var(--radius); border:var(--border); box-shadow:var(--shadow)}
     form{display:grid; gap:12px}
     input, textarea{width:100%; padding:12px 14px; border-radius:12px; border:1px solid #2a2d34; background:#0f1116; color:var(--text)}
     @media (max-width:980px){ .contact .wrap{grid-template-columns:1fr} }
-
     .card.links a{ color:var(--link); text-decoration:none; font-weight:700 }
     .card.links a:hover{ color:var(--link-hover); text-decoration:underline }
     .card.links a:visited{ color:var(--link) }
-
     footer{padding:28px 0 60px; color:var(--muted)}
     .foot{display:flex; align-items:center; justify-content:space-between; gap:18px}
     .social{display:flex; gap:12px}
@@ -124,6 +145,7 @@
   </style>
 </head>
 <body>
+  <!-- Header -->
   <header>
     <div class="container nav">
       <div class="brand"><span class="dot" aria-hidden="true"></span> David’s Gallery</div>
@@ -145,6 +167,7 @@
     </div>
   </header>
 
+  <!-- Hero -->
   <main id="home" class="hero" aria-label="Hero">
     <div class="inner">
       <div class="kicker">Vienna, Austria</div>
@@ -157,6 +180,7 @@
     </div>
   </main>
 
+  <!-- About -->
   <section id="about">
     <div class="container about">
       <div class="card">
@@ -174,6 +198,7 @@
     </div>
   </section>
 
+  <!-- Gallery -->
   <section id="gallery" class="gallery">
     <div class="container">
       <h2>Gallery</h2>
@@ -187,6 +212,7 @@
     </div>
   </section>
 
+  <!-- Contact -->
   <section id="contact" class="contact">
     <div class="container wrap">
       <div class="card">
@@ -210,6 +236,7 @@
     </div>
   </section>
 
+  <!-- Footer -->
   <footer>
     <div class="container foot">
       <div>© <span id="year"></span> David • Just a photographer</div>
@@ -224,13 +251,14 @@
     </div>
   </footer>
 
+  <!-- Lightbox -->
   <dialog class="lightbox" id="lightbox"><figure><img id="lightImg" alt=""><button class="close" onclick="closeLightbox()" aria-label="Close">✕</button></figure></dialog>
 
   <script>
-    // --- SET YOUR REPO INFO HERE ---
-    const GH_USER  = "davidsgallery99";       // <- change if different
-    const GH_REPO  = "davidsgallery99.github.io"; // <- change if different
-    const BRANCH   = "main";                  // or "gh-pages" if you use that
+    // --- Repo info for GitHub API listing (change if needed) ---
+    const GH_USER  = "davidsgallery99";              // your GitHub username
+    const GH_REPO  = "davidsgallery99.github.io";    // your Pages repo
+    const BRANCH   = "main";                         // or "gh-pages"
 
     // --- Mobile drawer ---
     const drawer=document.getElementById('drawer');
@@ -243,63 +271,64 @@
     }
     btn?.addEventListener('click',()=>toggleDrawer());
 
-    // --- Utilities ---
+    // --- Helpers ---
     const exts = ['.jpg','.jpeg','.png','.webp','.avif','.JPG','.JPEG','.PNG','.WEBP','.AVIF'];
     const enc = s => s.split('/').map(encodeURIComponent).join('/');
-
     async function listDir(path){
       const url = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${enc(path)}?ref=${encodeURIComponent(BRANCH)}`;
       const res = await fetch(url, {headers:{'Accept':'application/vnd.github+json'}});
       if(!res.ok) throw new Error(`GitHub API ${res.status} for ${path}`);
       return res.json();
     }
+    function isImage(name){ return exts.some(e => name.endsWith(e)); }
 
-    function isImage(name){
-      return exts.some(e => name.endsWith(e));
-    }
+    // --- Build gallery from your folders (no placeholders) ---
+    const grid = document.getElementById('grid');
+    const categories = ['city','people','nature'];
 
     function makeTile(category, filename, size){
       const a = document.createElement('a');
       a.className = 'tile';
       a.dataset.tags = category;
-      a.dataset.size = size; // s/m/l
-      a.href = `images/large/${category}/${filename}`;
+      a.dataset.size = size; // "s" | "m" | "l"
+      const large = `images/large/${category}/${filename}`;
+      const thumb = `images/thumbs/${category}/${filename}`;
+      a.href = large;
 
       const img = document.createElement('img');
       img.loading = 'lazy';
+      img.decoding = 'async';
       img.alt = `${category} photo`;
-      img.src = `images/thumbs/${category}/${filename}`;
-      img.addEventListener('error', () => { img.src = a.href; }, { once:true }); // fallback to large if thumb missing
+
+      // Sharp by default (large), with an optional smaller candidate
+      img.src = large;
+      img.srcset = `${thumb} 600w, ${large} 1600w`;
+      img.sizes = `
+        (max-width:620px) 90vw,
+        (max-width:1024px) 45vw,
+        30vw
+      `;
+      // If thumb missing, keep large (no pixelation)
+      img.addEventListener('error', e => { if(e.target.src.includes('/thumbs/')) e.target.src = large; }, {once:true});
 
       a.appendChild(img);
       return a;
     }
 
-    // --- Build Gallery from folders (no placeholders) ---
-    const grid = document.getElementById('grid');
-    const categories = ['city','people','nature'];
-
     (async function build(){
-      // Load thumbs lists from GitHub for each category
       const lists = await Promise.all(categories.map(cat => listDir(`images/thumbs/${cat}`).catch(()=>[])));
-      // Flatten into [{cat, filename}]
-      /** @type {{cat:string, filename:string}[]} */
       const items = [];
       lists.forEach((arr, i)=>{
         const cat = categories[i];
         (arr||[]).filter(x => x.type==='file' && isImage(x.name)).forEach(x => items.push({cat, filename:x.name}));
       });
 
-      // Create tiles with a simple repeating size pattern to fill the screen nicely
-      const pattern = ['l','m','s','m','m','l','s','m']; // repeat
-      items.forEach((it, idx)=>{
-        const size = pattern[idx % pattern.length];
-        grid.appendChild(makeTile(it.cat, it.filename, size));
-      });
+      // Pattern to make the grid feel “masonry”
+      const pattern = ['l','m','s','m','m','l','s','m'];
+      items.forEach((it, idx)=> grid.appendChild(makeTile(it.cat, it.filename, pattern[idx % pattern.length])));
     })().catch(err=>{
       console.error(err);
-      // Minimal fallback: show nothing but avoid broken text
-      grid.innerHTML = '';
+      grid.innerHTML = ''; // stay quiet if listing fails
     });
 
     // --- Filters ---
@@ -327,9 +356,8 @@
     function closeLightbox(){ dlg.close(); }
     window.closeLightbox = closeLightbox;
 
-    // --- Year + Hero check ---
+    // --- Year ---
     document.getElementById('year').textContent=new Date().getFullYear();
-    new Image().src='images/hero.jpg'; // warm cache
   </script>
 </body>
 </html>
