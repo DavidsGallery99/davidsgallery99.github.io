@@ -1,37 +1,261 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>David's Gallery</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>David — Photography</title>
+  <meta name="description" content="Vienna‑based photographer. City, people, and landscape photography." />
+  <meta property="og:title" content="David — Photography" />
+  <meta property="og:description" content="Portfolio of David: light, cities & moments." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="images/og-preview.jpg" />
+  <link rel="icon" href="images/favicon.ico" />
+
   <style>
-    body {
-      font-family: system-ui, -apple-system, Roboto, Arial;
-      margin: 0;
-      background: #fff;
-      color: #222;
-      text-align: center;
-      padding: 80px 20px;
+    :root{
+      --bg:#0b0b0c; /* dark background (auto-switch below) */
+      --panel:#111214;
+      --text:#e9e9ea;
+      --muted:#a9abb3;
+      --accent:#91caff;
+      --accent-2:#ffd78e;
+      --max:1200px;
     }
-    h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
-    p { max-width: 600px; margin: 0 auto 2rem; color: #555; }
-    img {
-      width: 300px; height: auto; margin: 10px;
-      border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#ffffff; --panel:#f7f7f9; --text:#141414; --muted:#555; }
     }
-    a { color: #0066cc; text-decoration: none; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text);}
+
+    /* Layout helpers */
+    .container{max-width:var(--max); margin-inline:auto; padding:0 20px}
+    .btn{display:inline-block; padding:12px 18px; border-radius:999px; background:var(--accent); color:#0b0b0c; text-decoration:none; font-weight:600}
+    .btn.secondary{background:transparent; outline:2px solid var(--accent); color:var(--text)}
+
+    /* Header */
+    header{position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(6px); background:color-mix(in srgb, var(--bg) 80%, transparent); border-bottom:1px solid #2225}
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; height:64px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.4px}
+    .brand .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+    nav ul{list-style:none; margin:0; padding:0; display:flex; gap:18px}
+    nav a{color:var(--text); text-decoration:none; opacity:.9}
+    nav a:hover{opacity:1}
+    .menu-btn{display:none}
+
+    @media (max-width:780px){
+      nav ul{display:none}
+      .menu-btn{display:inline-flex; align-items:center; gap:8px; background:transparent; border:1px solid #333a; color:var(--text); padding:8px 12px; border-radius:8px}
+      .drawer{position:fixed; inset:64px 0 0 auto; width:min(360px,90vw); background:var(--panel); border-left:1px solid #2225; transform:translateX(100%); transition:.25s ease; padding:18px}
+      .drawer.open{transform:none}
+      .drawer a{display:block; padding:12px 8px; border-bottom:1px dashed #3336; text-decoration:none; color:var(--text)}
+    }
+
+    /* Hero */
+    .hero{position:relative; min-height:72vh; display:grid; place-items:center; text-align:center;}
+    .hero::before{content:""; position:absolute; inset:0; background:url('images/hero.jpg') center/cover no-repeat; filter:brightness(.55) saturate(1.05);}
+    @media (prefers-color-scheme: light){ .hero::before{filter:brightness(.8);} }
+    .hero > .inner{position:relative; z-index:1; padding:60px 20px}
+    .kicker{letter-spacing:.2em; text-transform:uppercase; font-size:.8rem; color:var(--muted)}
+    .hero h1{font-size:clamp(2rem,6vw,3.2rem); margin:.35em 0 .2em}
+    .hero p{max-width:680px; margin:0 auto 26px; color:#cfd1d6}
+
+    /* About */
+    section{padding:64px 0}
+    .about{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
+    .about .card{background:var(--panel); padding:24px; border-radius:14px; border:1px solid #2224}
+    .about h2{margin-top:0}
+    @media (max-width:900px){ .about{grid-template-columns:1fr} }
+
+    /* Gallery */
+    .gallery h2{margin:0 0 16px}
+    .filters{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px}
+    .filters button{background:#1a1b1f; color:var(--text); border:1px solid #2a2d34; padding:8px 12px; border-radius:999px; cursor:pointer}
+    .filters button.active{background:var(--accent); color:#0b0b0c}
+
+    .grid{display:grid; gap:12px; grid-template-columns:repeat(3,1fr)}
+    .tile{position:relative; overflow:hidden; border-radius:12px; border:1px solid #2224}
+    .tile img{width:100%; height:100%; display:block; object-fit:cover; aspect-ratio:4/3; transition:transform .35s ease}
+    .tile:hover img{transform:scale(1.04)}
+
+    @media (max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:640px){ .grid{grid-template-columns:1fr} }
+
+    /* Lightbox */
+    dialog.lightbox{width:min(1000px,92vw); border:none; padding:0; background:transparent}
+    dialog::backdrop{background:rgba(0,0,0,.75)}
+    .lightbox figure{margin:0; position:relative}
+    .lightbox img{width:100%; height:auto; display:block; border-radius:12px}
+    .close{position:absolute; top:8px; right:8px; background:#0009; color:#fff; border:none; border-radius:999px; width:36px; height:36px; font-size:18px; cursor:pointer}
+
+    /* Contact */
+    .contact .wrap{display:grid; grid-template-columns:1fr 1fr; gap:24px}
+    .card{background:var(--panel); padding:24px; border-radius:14px; border:1px solid #2224}
+    form{display:grid; gap:12px}
+    input, textarea{width:100%; padding:12px 14px; border-radius:10px; border:1px solid #2a2d34; background:#0f1013; color:var(--text)}
+    @media (max-width:900px){ .contact .wrap{grid-template-columns:1fr} }
+
+    /* Footer */
+    footer{padding:28px 0 60px; color:var(--muted)}
+    .foot{display:flex; align-items:center; justify-content:space-between; gap:18px}
+    .social{display:flex; gap:12px}
+    .social a{display:inline-flex; width:36px; height:36px; align-items:center; justify-content:center; border-radius:50%; background:#1a1b20; border:1px solid #2224}
+    .heart{color:var(--accent-2)}
+    @media (max-width:700px){ .foot{flex-direction:column; text-align:center} }
   </style>
 </head>
 <body>
-  <h1>David's Gallery</h1>
-  <p>Vienna-based photographer capturing light, cities, and moments.</p>
+  <header>
+    <div class="container nav">
+      <div class="brand"><span class="dot" aria-hidden="true"></span> David’s Gallery</div>
+      <nav aria-label="primary">
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="menu-btn" id="menuBtn" aria-controls="drawer" aria-expanded="false">Menu ▾</button>
+    </div>
+    <div class="drawer" id="drawer" aria-hidden="true">
+      <a href="#home" onclick="toggleDrawer(false)">Home</a>
+      <a href="#about" onclick="toggleDrawer(false)">About</a>
+      <a href="#gallery" onclick="toggleDrawer(false)">Gallery</a>
+      <a href="#contact" onclick="toggleDrawer(false)">Contact</a>
+    </div>
+  </header>
 
-  <div>
-    <img src="photo1.jpg" alt="">
-    <img src="photo2.jpg" alt="">
-    <img src="photo3.jpg" alt="">
-  </div>
+  <main id="home" class="hero">
+    <div class="inner">
+      <div class="kicker">Vienna, Austria</div>
+      <h1>Light, Cities & Moments</h1>
+      <p>Photography by David. A curated selection of urban scenes, people, and landscapes. Prints & licensing on request.</p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap">
+        <a class="btn" href="#gallery">View Gallery</a>
+        <a class="btn secondary" href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+  </main>
 
-  <p>Follow me on <a href="https://instagram.com/yourhandle" target="_blank">Instagram</a></p>
+  <section id="about">
+    <div class="container about">
+      <div class="card">
+        <h2>About</h2>
+        <p>Hi, I’m David — a Vienna‑based photographer focusing on authentic light and atmosphere. I work across city, people, and nature. For collaborations, prints, and licensing, drop me a line below.</p>
+      </div>
+      <div class="card">
+        <h3>Quick Facts</h3>
+        <ul>
+          <li>Based in Vienna • available worldwide</li>
+          <li>Portraits • Street • Landscape</li>
+          <li>Gear: Canon R8 + 24–105, 100–400</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" class="gallery">
+    <div class="container">
+      <h2>Gallery</h2>
+      <div class="filters" aria-label="filters">
+        <button class="active" data-filter="all">All</button>
+        <button data-filter="city">City</button>
+        <button data-filter="people">People</button>
+        <button data-filter="nature">Nature</button>
+      </div>
+      <div class="grid" id="grid">
+        <!-- Repeat tiles: set data-tags for filtering; replace images with your files in /images/ -->
+        <a class="tile" href="images/large/city-1.jpg" data-tags="city"><img loading="lazy" src="images/thumbs/city-1.jpg" alt="City scene 1"></a>
+        <a class="tile" href="images/large/city-2.jpg" data-tags="city"><img loading="lazy" src="images/thumbs/city-2.jpg" alt="City scene 2"></a>
+        <a class="tile" href="images/large/people-1.jpg" data-tags="people"><img loading="lazy" src="images/thumbs/people-1.jpg" alt="Portrait"></a>
+        <a class="tile" href="images/large/nature-1.jpg" data-tags="nature"><img loading="lazy" src="images/thumbs/nature-1.jpg" alt="Nature 1"></a>
+        <a class="tile" href="images/large/people-2.jpg" data-tags="people"><img loading="lazy" src="images/thumbs/people-2.jpg" alt="Portrait 2"></a>
+        <a class="tile" href="images/large/nature-2.jpg" data-tags="nature"><img loading="lazy" src="images/thumbs/nature-2.jpg" alt="Nature 2"></a>
+        <a class="tile" href="images/large/city-3.jpg" data-tags="city"><img loading="lazy" src="images/thumbs/city-3.jpg" alt="City scene 3"></a>
+        <a class="tile" href="images/large/people-3.jpg" data-tags="people"><img loading="lazy" src="images/thumbs/people-3.jpg" alt="Portrait 3"></a>
+        <a class="tile" href="images/large/nature-3.jpg" data-tags="nature"><img loading="lazy" src="images/thumbs/nature-3.jpg" alt="Nature 3"></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="container wrap">
+      <div class="card">
+        <h2>Contact</h2>
+        <p>For bookings, prints, and licensing, send a message. I’ll get back to you quickly.</p>
+        <form action="mailto:you@example.com" method="post" enctype="text/plain">
+          <input type="text" name="name" placeholder="Your name" required>
+          <input type="email" name="email" placeholder="Email" required>
+          <textarea name="message" rows="5" placeholder="Tell me about your project…" required></textarea>
+          <button class="btn" type="submit">Send</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Elsewhere</h3>
+        <p><a href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a><br>
+        <a href="https://davidsgallery99.github.io">Website</a><br>
+        <a href="#">Prints (coming soon)</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container foot">
+      <div>© <span id="year"></span> David • Made with <span class="heart">♥</span> on GitHub Pages</div>
+      <div class="social" aria-label="social links">
+        <a href="https://instagram.com/yourhandle" target="_blank" aria-label="Instagram" rel="noopener" title="Instagram">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm0 2h10c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3zm9 1a1 1 0 100 2 1 1 0 000-2zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
+        </a>
+        <a href="mailto:you@example.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M2 6c0-1.1.9-2 2-2h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm2 0l8 5 8-5H4zm16 12V8l-8 5-8-5v10h16z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox & filter scripts (tiny, no frameworks) -->
+  <dialog class="lightbox" id="lightbox"><figure><img id="lightImg" alt=""><button class="close" onclick="closeLightbox()" aria-label="Close">✕</button></figure></dialog>
+  <script>
+    // mobile drawer
+    const drawer=document.getElementById('drawer');
+    const btn=document.getElementById('menuBtn');
+    function toggleDrawer(force){
+      const open=typeof force==='boolean'?force:!drawer.classList.contains('open');
+      drawer.classList.toggle('open',open);
+      drawer.setAttribute('aria-hidden', String(!open));
+      btn.setAttribute('aria-expanded', String(open));
+    }
+    btn?.addEventListener('click',()=>toggleDrawer());
+
+    // gallery filters
+    const grid=document.getElementById('grid');
+    const filterBtns=[...document.querySelectorAll('.filters button')];
+    filterBtns.forEach(b=>b.addEventListener('click',()=>{
+      filterBtns.forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const f=b.dataset.filter;
+      [...grid.children].forEach(tile=>{
+        const show=f==='all'|| tile.dataset.tags.includes(f);
+        tile.style.display=show?'block':'none';
+      });
+    }));
+
+    // lightbox
+    const dlg=document.getElementById('lightbox');
+    const lightImg=document.getElementById('lightImg');
+    grid.addEventListener('click',e=>{
+      const a=e.target.closest('a.tile');
+      if(!a) return;
+      e.preventDefault();
+      lightImg.src=a.getAttribute('href');
+      lightImg.alt=a.querySelector('img')?.alt||'';
+      dlg.showModal();
+    });
+    function closeLightbox(){ dlg.close(); }
+
+    // year
+    document.getElementById('year').textContent=new Date().getFullYear();
+  </script>
 </body>
 </html>
