@@ -4,12 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>David — Photography</title>
-  <meta name="description" content="Vienna‑based photographer. City, people, and landscape photography." />
+  <meta name="description" content="Vienna-based photographer. City, people, and landscape photography." />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0b0b0c" />
   <meta property="og:title" content="David — Photography" />
   <meta property="og:description" content="Portfolio of David: light, cities & moments." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="images/og-preview.jpg" />
   <link rel="icon" href="images/favicon.ico" />
+  <!-- Speed hint for the hero image -->
+  <link rel="preload" as="image" href="images/hero.jpg" imagesrcset="images/hero.jpg" />
 
   <style>
     :root{
@@ -20,6 +24,9 @@
       --accent:#91caff;
       --accent-2:#ffd78e;
       --max:1200px;
+      --link:#b38bfa;    /* purple link (Elsewhere) */
+      --link-hover:#d0a9ff;
+      --focus:#ffd78e;   /* high-contrast focus ring */
     }
     @media (prefers-color-scheme: light){
       :root{ --bg:#ffffff; --panel:#f7f7f9; --text:#141414; --muted:#555; }
@@ -27,6 +34,14 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text);}
+
+    /* Better focus styles */
+    :focus-visible{ outline:3px solid var(--focus); outline-offset:3px; border-radius:6px }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; animation:none !important}
+    }
 
     /* Layout helpers */
     .container{max-width:var(--max); margin-inline:auto; padding:0 20px}
@@ -60,7 +75,7 @@
     .hero h1{font-size:clamp(2rem,6vw,3.2rem); margin:.35em 0 .2em}
     .hero p{max-width:680px; margin:0 auto 26px; color:#cfd1d6}
 
-    /* About */
+    /* Sections */
     section{padding:64px 0}
     .about{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
     .about .card{background:var(--panel); padding:24px; border-radius:14px; border:1px solid #2224}
@@ -93,7 +108,16 @@
     .card{background:var(--panel); padding:24px; border-radius:14px; border:1px solid #2224}
     form{display:grid; gap:12px}
     input, textarea{width:100%; padding:12px 14px; border-radius:10px; border:1px solid #2a2d34; background:#0f1013; color:var(--text)}
+    input{accent-color:var(--accent)}
     @media (max-width:900px){ .contact .wrap{grid-template-columns:1fr} }
+
+    /* Elsewhere links: always purple (visited too) */
+    .card.links a{
+      color:var(--link);
+      text-decoration:none;
+    }
+    .card.links a:hover{ color:var(--link-hover); text-decoration:underline }
+    .card.links a:visited{ color:var(--link) }
 
     /* Footer */
     footer{padding:28px 0 60px; color:var(--muted)}
@@ -133,7 +157,7 @@
       <p>Photography by David. A curated selection of urban scenes, people, and landscapes. Prints & licensing on request.</p>
       <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap">
         <a class="btn" href="#gallery">View Gallery</a>
-        <a class="btn secondary" href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a>
+        <a class="btn secondary" href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer">Instagram</a>
       </div>
     </div>
   </main>
@@ -142,7 +166,7 @@
     <div class="container about">
       <div class="card">
         <h2>About</h2>
-        <p>Hi, I’m David — a Vienna‑based photographer focusing on authentic light and atmosphere. I work across city, people, and nature. For collaborations, prints, and licensing, drop me a line below.</p>
+        <p>Hi, I’m David — a Vienna-based photographer focusing on authentic light and atmosphere. I work across city, people, and nature. For collaborations, prints, and licensing, drop me a line below.</p>
       </div>
       <div class="card">
         <h3>Quick Facts</h3>
@@ -159,13 +183,13 @@
     <div class="container">
       <h2>Gallery</h2>
       <div class="filters" aria-label="filters">
-        <button class="active" data-filter="all">All</button>
-        <button data-filter="city">City</button>
-        <button data-filter="people">People</button>
-        <button data-filter="nature">Nature</button>
+        <button class="active" data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="city" aria-pressed="false">City</button>
+        <button data-filter="people" aria-pressed="false">People</button>
+        <button data-filter="nature" aria-pressed="false">Nature</button>
       </div>
       <div class="grid" id="grid">
-        <!-- Repeat tiles: set data-tags for filtering; replace images with your files in /images/ -->
+        <!-- Replace images with your files in /images/ -->
         <a class="tile" href="images/large/city-1.jpg" data-tags="city"><img loading="lazy" src="images/thumbs/city-1.jpg" alt="City scene 1"></a>
         <a class="tile" href="images/large/city-2.jpg" data-tags="city"><img loading="lazy" src="images/thumbs/city-2.jpg" alt="City scene 2"></a>
         <a class="tile" href="images/large/people-1.jpg" data-tags="people"><img loading="lazy" src="images/thumbs/people-1.jpg" alt="Portrait"></a>
@@ -184,18 +208,20 @@
       <div class="card">
         <h2>Contact</h2>
         <p>For bookings, prints, and licensing, send a message. I’ll get back to you quickly.</p>
-        <form action="mailto:you@example.com" method="post" enctype="text/plain">
-          <input type="text" name="name" placeholder="Your name" required>
-          <input type="email" name="email" placeholder="Email" required>
+        <form action="mailto:you@example.com" method="post" enctype="text/plain" autocomplete="on">
+          <input type="text" name="name" placeholder="Your name" required autocomplete="name">
+          <input type="email" name="email" placeholder="Email" required autocomplete="email" inputmode="email">
           <textarea name="message" rows="5" placeholder="Tell me about your project…" required></textarea>
           <button class="btn" type="submit">Send</button>
         </form>
       </div>
-      <div class="card">
+      <div class="card links">
         <h3>Elsewhere</h3>
-        <p><a href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a><br>
-        <a href="https://davidsgallery99.github.io">Website</a><br>
-        <a href="#">Prints (coming soon)</a></p>
+        <p>
+          <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer">Instagram</a><br>
+          <a href="https://davidsgallery99.github.io" target="_blank" rel="noopener">Website</a><br>
+          <a href="#" aria-disabled="true">Prints (coming soon)</a>
+        </p>
       </div>
     </div>
   </section>
@@ -228,12 +254,12 @@
     }
     btn?.addEventListener('click',()=>toggleDrawer());
 
-    // gallery filters
+    // gallery filters (with aria-pressed)
     const grid=document.getElementById('grid');
     const filterBtns=[...document.querySelectorAll('.filters button')];
     filterBtns.forEach(b=>b.addEventListener('click',()=>{
-      filterBtns.forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
+      filterBtns.forEach(x=>{ x.classList.remove('active'); x.setAttribute('aria-pressed','false'); });
+      b.classList.add('active'); b.setAttribute('aria-pressed','true');
       const f=b.dataset.filter;
       [...grid.children].forEach(tile=>{
         const show=f==='all'|| tile.dataset.tags.includes(f);

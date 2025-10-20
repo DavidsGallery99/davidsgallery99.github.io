@@ -1,0 +1,46 @@
+davidsgallery99.github.io/
+│
+├── index.html
+└── images/
+    ├── hero.jpg
+    ├── favicon.ico
+    ├── thumbs/
+    │   ├── city-1.jpg
+    │   ├── city-2.jpg
+    │   ├── people-1.jpg
+    │   ├── people-2.jpg
+    │   ├── nature-1.jpg
+    │   └── nature-2.jpg
+    └── large/
+        ├── city-1.jpg
+        ├── city-2.jpg
+        ├── people-1.jpg
+        ├── people-2.jpg
+        ├── nature-1.jpg
+        └── nature-2.jpg
+
+
+
+
+
+4. Workflow Summary
+
+Take or edit photos in full quality.
+
+Save originals (resized if needed) into images/large/.
+
+Create smaller versions (same filenames) and save into images/thumbs/.
+
+Example:
+images/large/city-1.jpg
+images/thumbs/city-1.jpg
+
+Update file names in index.html if you add or remove photos.
+
+In GitHub Desktop:
+
+Commit your changes
+
+Click Push origin
+
+Your website updates automatically.
