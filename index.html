@@ -7,315 +7,175 @@
   <meta name="description" content="Vienna-based photographer. City, people, and landscape photography." />
   <meta name="robots" content="index,follow" />
   <meta name="theme-color" content="#0a0b0d" />
-  <meta property="og:title" content="David — Photography" />
-  <meta property="og:description" content="Portfolio of David: light, cities & moments." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="images/large/hero/hero.jpg" />
   <link rel="icon" href="images/favicon.ico" />
-  <!-- Preload hero for instant paint -->
-  <link rel="preload" as="image" href="images/large/hero/hero.jpg" imagesrcset="images/large/hero/hero.jpg" />
 
   <style>
-    /* ---- FIXED (dark) THEME — no auto light/dark ---- */
+    /* -------- Fixed (dark) theme -------- */
     :root{
       --bg:#0a0b0d;
-      --panel:#121318;
-      --panel-2:#161821;
       --text:#e9eaee;
       --muted:#a8acb7;
+      --panel:#121318;
+      --panel-2:#161821;
       --accent:#93c6ff;
-      --accent-2:#ffd78e;
-      --link:#b38bfa;
-      --link-hover:#d8b4ff;
       --focus:#ffd78e;
-      --max:1200px;
-      --radius:16px;
-      --radius-sm:12px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
       --border:1px solid rgba(255,255,255,.06);
-      --grid-gap:14px;
+      --radius:14px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background:var(--bg);
-      color:var(--text);
+    body{margin:0; background:var(--bg); color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    :focus-visible{outline:3px solid var(--focus); outline-offset:6px; border-radius:10px}
+
+    /* -------- Full-bleed Masonry Gallery -------- */
+    main{min-height:100dvh}
+    .grid{
+      column-gap:0;           /* no gaps, full-bleed rows */
+      line-height:0;          /* remove whitespace between inline-block images */
+      width:100vw;            /* edge to edge */
     }
-    :focus-visible{ outline:3px solid var(--focus); outline-offset:8px; border-radius:10px }
+    /* responsive column counts */
+    @media (min-width:1500px){ .grid{ column-count:6 } }
+    @media (min-width:1200px) and (max-width:1499px){ .grid{ column-count:5 } }
+    @media (min-width:900px)  and (max-width:1199px){ .grid{ column-count:4 } }
+    @media (min-width:640px)  and (max-width:899px) { .grid{ column-count:3 } }
+    @media (max-width:639px){  .grid{ column-count:2 } }
 
-    /* Layout */
-    .container{max-width:var(--max); margin-inline:auto; padding:0 22px}
-    .btn{display:inline-flex; gap:10px; align-items:center; padding:12px 18px; border-radius:999px; background:var(--accent); color:#0b0b0c; text-decoration:none; font-weight:700; letter-spacing:.2px; box-shadow:var(--shadow); border:0}
-    .btn.secondary{background:transparent; outline:2px solid var(--accent); color:var(--text); box-shadow:none}
-    .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0)}
-
-    /* Header */
-    header{position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(8px); background:color-mix(in srgb, var(--bg) 82%, transparent); border-bottom:var(--border)}
-    .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; height:68px}
-    .brand{display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.3px}
-    .brand .dot{width:11px; height:11px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2))}
-    nav ul{list-style:none; margin:0; padding:0; display:flex; gap:22px}
-    nav a{color:var(--text); text-decoration:none; opacity:.9; font-weight:600}
-    nav a:hover{opacity:1}
-    .menu-btn{display:none}
-    @media (max-width:820px){
-      nav ul{display:none}
-      .menu-btn{display:inline-flex; align-items:center; gap:8px; background:transparent; border:1px solid #3338; color:var(--text); padding:8px 12px; border-radius:10px}
-      .drawer{position:fixed; inset:68px 0 0 auto; width:min(380px,92vw); background:var(--panel); border-left:var(--border); transform:translateX(100%); transition:.25s ease; padding:18px}
-      .drawer.open{transform:none}
-      .drawer a{display:block; padding:14px 10px; border-bottom:1px dashed #3334; text-decoration:none; color:var(--text); font-weight:600}
+    .tile{
+      display:inline-block;   /* required for masonry */
+      width:100%;
+      break-inside:avoid;     /* keep each image intact */
+      position:relative;
     }
-
-    /* Hero — fills viewport; single color theme; high-res background */
-    .hero{position:relative; min-height:100dvh; display:grid; place-items:end center; text-align:center; overflow:clip}
-    .hero::before{
-      content:""; position:absolute; inset:0;
-      background:
-        linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.2) 40%, transparent 70%),
-        url('images/large/hero/hero.jpg') center / cover no-repeat;
-      filter:saturate(1.05) contrast(1.03);
+    .tile a{ display:block; text-decoration:none; color:inherit; }
+    .tile img{
+      width:100%; height:auto; display:block;
+      background:#0f1116;     /* subtle background while loading */
+      transition:filter .2s ease, transform .35s ease;
+      filter:saturate(1.02) contrast(1.02);
     }
-    .hero > .inner{ position:relative; z-index:1; padding:72px 20px 10vh; max-width:900px; margin:auto }
-    .kicker{letter-spacing:.28em; text-transform:uppercase; font-size:.8rem; color:#cfd1d6}
-    .hero h1{font-size:clamp(2.2rem,6.4vw,4rem); margin:.35em 0 .2em; line-height:1.05}
-    .hero p{max-width:760px; margin:0 auto 26px; color:#e8e9ee; font-size:clamp(1rem,2.4vw,1.15rem)}
-    .hero .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+    .tile:hover img{ transform:scale(1.01) }
 
-    /* Sections */
-    section{padding:70px 0}
-    .about{display:grid; grid-template-columns:1.1fr .9fr; gap:28px}
-    .about .card{background:var(--panel); padding:26px; border-radius:var(--radius); border:var(--border); box-shadow:var(--shadow)}
-    .about h2{margin-top:0}
-    @media (max-width:980px){ .about{grid-template-columns:1fr} }
-
-    /* Gallery */
-    .gallery h2{margin:0 0 16px; font-size:2rem}
-    .filters{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px}
-    .filters button{background:var(--panel-2); color:var(--text); border:var(--border); padding:9px 14px; border-radius:999px; cursor:pointer; font-weight:700}
-    .filters button.active{background:var(--accent); color:#0b0b0c; border:0}
-
-    /* Grid that fills nicely */
-    .grid{ display:grid; gap:var(--grid-gap); grid-template-columns:repeat(12, 1fr) }
-    @media (max-width:1280px){ .grid{ grid-template-columns:repeat(10,1fr) } }
-    @media (max-width:1024px){ .grid{ grid-template-columns:repeat(8,1fr) } }
-    @media (max-width:840px){ .grid{ grid-template-columns:repeat(6,1fr) } }
-    @media (max-width:620px){ .grid{ grid-template-columns:repeat(4,1fr) } }
-    @media (max-width:420px){ .grid{ grid-template-columns:repeat(2,1fr) } }
-
-    .tile{position:relative; overflow:hidden; border-radius:var(--radius-sm); border:var(--border); background:#0f1116}
-    .tile img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease; background:#111 }
-    .tile:hover img{ transform:scale(1.04) }
-    .tile[data-size="m"]{ grid-column:span 4; aspect-ratio:4/3 }
-    .tile[data-size="l"]{ grid-column:span 6; aspect-ratio:16/10 }
-    .tile[data-size="s"]{ grid-column:span 3; aspect-ratio:1/1 }
-    @media (max-width:840px){
-      .tile[data-size="l"], .tile[data-size="m"]{ grid-column:span 6 }
-      .tile[data-size="s"]{ grid-column:span 4 }
+    /* -------- Minimal overlay controls -------- */
+    .fab{
+      position:fixed; right:16px; bottom:16px; z-index:50;
+      width:46px; height:46px; border-radius:50%;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:var(--panel); color:var(--text);
+      border:var(--border); box-shadow:var(--shadow);
+      cursor:pointer; user-select:none;
     }
-    @media (max-width:620px){
-      .tile{ grid-column:span 4 !important; aspect-ratio:4/3 }
+    .drawer{
+      position:fixed; inset:0 0 0 auto; width:min(360px,88vw);
+      transform:translateX(100%); transition:.25s ease transform;
+      background:var(--panel-2); border-left:var(--border); z-index:60; padding:18px;
+    }
+    .drawer.open{ transform:none }
+    .drawer h3{ margin:0 0 6px 0 }
+    .drawer a{ display:block; padding:10px 0; color:var(--text); text-decoration:none; border-bottom:1px dashed #3336 }
+    .drawer p{ color:var(--muted) }
+    .drawer .close{
+      position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:50%;
+      border:var(--border); background:#000a; color:#fff; cursor:pointer;
     }
 
-    /* Lightbox */
-    dialog.lightbox{width:min(1200px,94vw); border:none; padding:0; background:transparent}
-    dialog::backdrop{background:rgba(0,0,0,.8)}
+    /* -------- Lightbox -------- */
+    dialog.lightbox{width:min(1600px,94vw); border:none; padding:0; background:transparent; }
+    dialog::backdrop{background:rgba(0,0,0,.85)}
     .lightbox figure{margin:0; position:relative}
-    .lightbox img{width:100%; height:auto; display:block; border-radius:var(--radius)}
-    .close{position:absolute; top:10px; right:10px; background:#000a; color:#fff; border:none; border-radius:999px; width:40px; height:40px; font-size:18px; cursor:pointer}
-
-    /* Contact & Footer */
-    .contact .wrap{display:grid; grid-template-columns:1fr 1fr; gap:24px}
-    .card{background:var(--panel); padding:26px; border-radius:var(--radius); border:var(--border); box-shadow:var(--shadow)}
-    form{display:grid; gap:12px}
-    input, textarea{width:100%; padding:12px 14px; border-radius:12px; border:1px solid #2a2d34; background:#0f1116; color:var(--text)}
-    @media (max-width:980px){ .contact .wrap{grid-template-columns:1fr} }
-    .card.links a{ color:var(--link); text-decoration:none; font-weight:700 }
-    .card.links a:hover{ color:var(--link-hover); text-decoration:underline }
-    .card.links a:visited{ color:var(--link) }
-    footer{padding:28px 0 60px; color:var(--muted)}
-    .foot{display:flex; align-items:center; justify-content:space-between; gap:18px}
-    .social{display:flex; gap:12px}
-    .social a{display:inline-flex; width:38px; height:38px; align-items:center; justify-content:center; border-radius:50%; background:#171a22; border:var(--border)}
-    .heart{color:var(--accent-2)}
-    @media (max-width:720px){ .foot{flex-direction:column; text-align:center} }
+    .lightbox img{width:100%; height:auto; display:block; border-radius:12px}
+    .lightbox .close{position:absolute; top:10px; right:10px; background:#000a; color:#fff; border:none; border-radius:999px; width:40px; height:40px; font-size:18px; cursor:pointer}
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="container nav">
-      <div class="brand"><span class="dot" aria-hidden="true"></span> David’s Gallery</div>
-      <nav aria-label="primary">
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#gallery">Gallery</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-      <button class="menu-btn" id="menuBtn" aria-controls="drawer" aria-expanded="false">Menu ▾</button>
-    </div>
-    <div class="drawer" id="drawer" aria-hidden="true">
-      <a href="#home" onclick="toggleDrawer(false)">Home</a>
-      <a href="#about" onclick="toggleDrawer(false)">About</a>
-      <a href="#gallery" onclick="toggleDrawer(false)">Gallery</a>
-      <a href="#contact" onclick="toggleDrawer(false)">Contact</a>
-    </div>
-  </header>
+  <!-- Minimal floating menu (not distracting) -->
+  <button class="fab" id="menuBtn" aria-controls="drawer" aria-expanded="false" title="Menu">≡</button>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <button class="close" onclick="toggleDrawer(false)" aria-label="Close">✕</button>
+    <h3>David — Photography</h3>
+    <p>Vienna • Portraits • Street • Landscape</p>
+    <a href="mailto:you@example.com">Contact</a>
+    <a href="https://www.instagram.com/davidsgallery99/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://davidsgallery99.github.io" target="_blank" rel="noopener">Website</a>
+    <p style="margin-top:12px; color:#777">© <span id="year"></span> David</p>
+  </aside>
 
-  <!-- Hero -->
-  <main id="home" class="hero" aria-label="Hero">
-    <div class="inner">
-      <div class="kicker">Vienna, Austria</div>
-      <h1>Light, Cities &amp; Moments</h1>
-      <p>Photography by David. A curated selection of urban scenes, people, and landscapes. Prints &amp; licensing on request.</p>
-      <div class="cta">
-        <a class="btn" href="#gallery">View Gallery</a>
-        <a class="btn secondary" href="https://www.instagram.com/davidsgallery99/" target="_blank" rel="noopener noreferrer">Instagram</a>
-      </div>
-    </div>
+  <!-- IMAGE-ONLY HOMEPAGE -->
+  <main>
+    <div class="grid" id="grid" aria-label="Photo gallery"></div>
   </main>
 
-  <!-- About -->
-  <section id="about">
-    <div class="container about">
-      <div class="card">
-        <h2>About</h2>
-        <p>Hi, I’m David — a Vienna-based photographer focusing on authentic light and atmosphere. I work across city, people, and nature. For collaborations, prints, and licensing, drop me a line below.</p>
-      </div>
-      <div class="card">
-        <h3>Quick Facts</h3>
-        <ul>
-          <li>Based in Vienna • available worldwide</li>
-          <li>Portraits • Street • Landscape</li>
-          <li>Gear: Canon R8 + 24–105, 100–400</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- Gallery -->
-  <section id="gallery" class="gallery">
-    <div class="container">
-      <h2>Gallery</h2>
-      <div class="filters" aria-label="filters">
-        <button class="active" data-filter="all" aria-pressed="true">All</button>
-        <button data-filter="city" aria-pressed="false">City</button>
-        <button data-filter="people" aria-pressed="false">People</button>
-        <button data-filter="nature" aria-pressed="false">Nature</button>
-      </div>
-      <div class="grid" id="grid"></div>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact" class="contact">
-    <div class="container wrap">
-      <div class="card">
-        <h2>Contact</h2>
-        <p>For bookings, prints, and licensing, send a message. I’ll get back to you quickly.</p>
-        <form action="mailto:you@example.com" method="post" enctype="text/plain" autocomplete="on">
-          <input type="text" name="name" placeholder="Your name" required autocomplete="name">
-          <input type="email" name="email" placeholder="Email" required autocomplete="email" inputmode="email">
-          <textarea name="message" rows="5" placeholder="Tell me about your project…" required></textarea>
-          <button class="btn" type="submit">Send</button>
-        </form>
-      </div>
-      <div class="card links">
-        <h3>Elsewhere</h3>
-        <p>
-          <a href="https://www.instagram.com/davidsgallery99/" target="_blank" rel="noopener noreferrer">Instagram</a><br>
-          <a href="https://davidsgallery99.github.io" target="_blank" rel="noopener">Website</a><br>
-          <a href="#" aria-disabled="true">Prints (coming soon)</a>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container foot">
-      <div>© <span id="year"></span> David • Just a photographer</div>
-      <div class="social" aria-label="social links">
-        <a href="https://www.instagram.com/davidsgallery99/" target="_blank" aria-label="Instagram" rel="noopener" title="Instagram">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm0 2h10c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3zm9 1a1 1 0 100 2 1 1 0 000-2zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
-        </a>
-        <a href="mailto:you@example.com" aria-label="Email" title="Email">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M2 6c0-1.1.9-2 2-2h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm2 0l8 5 8-5H4zm16 12V8l-8 5-8-5v10h16z"/></svg>
-        </a>
-      </div>
-    </div>
-  </footer>
-
   <!-- Lightbox -->
-  <dialog class="lightbox" id="lightbox"><figure><img id="lightImg" alt=""><button class="close" onclick="closeLightbox()" aria-label="Close">✕</button></figure></dialog>
+  <dialog class="lightbox" id="lightbox">
+    <figure>
+      <img id="lightImg" alt="">
+      <button class="close" onclick="closeLightbox()" aria-label="Close">✕</button>
+    </figure>
+  </dialog>
 
   <script>
-    // --- Repo info for GitHub API listing (change if needed) ---
-    const GH_USER  = "davidsgallery99";              // your GitHub username
-    const GH_REPO  = "davidsgallery99.github.io";    // your Pages repo
-    const BRANCH   = "main";                         // or "gh-pages"
+    // ---------- Repo info for auto-loading your folders ----------
+    const GH_USER = "davidsgallery99";             // change if needed
+    const GH_REPO = "davidsgallery99.github.io";   // change if needed
+    const BRANCH  = "main";                        // or "gh-pages"
 
-    // --- Mobile drawer ---
-    const drawer=document.getElementById('drawer');
-    const btn=document.getElementById('menuBtn');
+    // ---------- Minimal menu ----------
+    const drawer = document.getElementById('drawer');
+    const btn = document.getElementById('menuBtn');
     function toggleDrawer(force){
-      const open=typeof force==='boolean'?force:!drawer.classList.contains('open');
-      drawer.classList.toggle('open',open);
+      const open = typeof force==='boolean' ? force : !drawer.classList.contains('open');
+      drawer.classList.toggle('open', open);
       drawer.setAttribute('aria-hidden', String(!open));
       btn.setAttribute('aria-expanded', String(open));
     }
-    btn?.addEventListener('click',()=>toggleDrawer());
+    btn.addEventListener('click', ()=>toggleDrawer());
 
-    // --- Helpers ---
+    // ---------- Helpers ----------
+    const grid = document.getElementById('grid');
+    const categories = ['city','people','nature'];
     const exts = ['.jpg','.jpeg','.png','.webp','.avif','.JPG','.JPEG','.PNG','.WEBP','.AVIF'];
     const enc = s => s.split('/').map(encodeURIComponent).join('/');
+    function isImage(name){ return exts.some(e => name.endsWith(e)); }
+
     async function listDir(path){
       const url = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${enc(path)}?ref=${encodeURIComponent(BRANCH)}`;
       const res = await fetch(url, {headers:{'Accept':'application/vnd.github+json'}});
       if(!res.ok) throw new Error(`GitHub API ${res.status} for ${path}`);
       return res.json();
     }
-    function isImage(name){ return exts.some(e => name.endsWith(e)); }
 
-    // --- Build gallery from your folders (no placeholders) ---
-    const grid = document.getElementById('grid');
-    const categories = ['city','people','nature'];
+    function makeTile(cat, filename){
+      const large = `images/large/${cat}/${filename}`;
+      const thumb = `images/thumbs/${cat}/${filename}`;
 
-    function makeTile(category, filename, size){
       const a = document.createElement('a');
-      a.className = 'tile';
-      a.dataset.tags = category;
-      a.dataset.size = size; // "s" | "m" | "l"
-      const large = `images/large/${category}/${filename}`;
-      const thumb = `images/thumbs/${category}/${filename}`;
       a.href = large;
+      a.className = 'tile';
+      a.dataset.tags = cat;
 
       const img = document.createElement('img');
+      img.alt = `${cat} photo`;
       img.loading = 'lazy';
       img.decoding = 'async';
-      img.alt = `${category} photo`;
 
-      // Sharp by default (large), with an optional smaller candidate
+      // Sharp by default; thumb only as a smaller candidate
       img.src = large;
-      img.srcset = `${thumb} 600w, ${large} 1600w`;
-      img.sizes = `
-        (max-width:620px) 90vw,
-        (max-width:1024px) 45vw,
-        30vw
-      `;
+      img.srcset = `${thumb} 600w, ${large} 1800w`;
+      img.sizes = '100vw';
+
       // If thumb missing, keep large (no pixelation)
-      img.addEventListener('error', e => { if(e.target.src.includes('/thumbs/')) e.target.src = large; }, {once:true});
+      img.addEventListener('error', e => {
+        if (e.target.currentSrc.includes('/thumbs/')) e.target.src = large;
+      }, {once:true});
 
       a.appendChild(img);
       return a;
     }
 
     (async function build(){
+      // Load and append every image from thumbs/* (mirrors to large/*)
       const lists = await Promise.all(categories.map(cat => listDir(`images/thumbs/${cat}`).catch(()=>[])));
       const items = [];
       lists.forEach((arr, i)=>{
@@ -323,41 +183,33 @@
         (arr||[]).filter(x => x.type==='file' && isImage(x.name)).forEach(x => items.push({cat, filename:x.name}));
       });
 
-      // Pattern to make the grid feel “masonry”
-      const pattern = ['l','m','s','m','m','l','s','m'];
-      items.forEach((it, idx)=> grid.appendChild(makeTile(it.cat, it.filename, pattern[idx % pattern.length])));
+      // Order: interleave categories for variety
+      items.sort((a,b)=> a.filename.localeCompare(b.filename));
+
+      // Append all as masonry tiles
+      items.forEach(it => grid.appendChild(makeTile(it.cat, it.filename)));
     })().catch(err=>{
       console.error(err);
-      grid.innerHTML = ''; // stay quiet if listing fails
+      // If listing fails, keep page clean
+      grid.innerHTML = "";
     });
 
-    // --- Filters ---
-    const filterBtns=[...document.querySelectorAll('.filters button')];
-    filterBtns.forEach(b=>b.addEventListener('click',()=>{
-      filterBtns.forEach(x=>{ x.classList.remove('active'); x.setAttribute('aria-pressed','false'); });
-      b.classList.add('active'); b.setAttribute('aria-pressed','true');
-      const f=b.dataset.filter;
-      [...grid.children].forEach(tile=>{
-        tile.style.display = (f==='all' || tile.dataset.tags===f) ? 'block' : 'none';
-      });
-    }));
-
-    // --- Lightbox ---
+    // ---------- Lightbox ----------
     const dlg=document.getElementById('lightbox');
     const lightImg=document.getElementById('lightImg');
-    grid.addEventListener('click',e=>{
-      const a=e.target.closest('a.tile');
+    grid.addEventListener('click', e=>{
+      const a = e.target.closest('a.tile');
       if(!a) return;
       e.preventDefault();
-      lightImg.src=a.getAttribute('href');
-      lightImg.alt=a.querySelector('img')?.alt||'';
+      lightImg.src = a.href;
+      lightImg.alt = a.querySelector('img')?.alt || '';
       dlg.showModal();
     });
     function closeLightbox(){ dlg.close(); }
     window.closeLightbox = closeLightbox;
 
-    // --- Year ---
-    document.getElementById('year').textContent=new Date().getFullYear();
+    // ---------- Year ----------
+    document.getElementById('year')?.appendChild(document.createTextNode(new Date().getFullYear()));
   </script>
 </body>
 </html>
